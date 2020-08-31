@@ -1,0 +1,472 @@
+\documentclass[]{article}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{dirtree}
+\usepackage{textpos}
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[english]{babel}
+\usepackage{tikz-uml}
+
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true}
+
+%fancy headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Modern Internet Forum Software}
+\rhead{\thepage}
+\usepackage{lipsum}
+
+
+\title{Modern Internet Forum Software \\ Project Proposal}
+\author{James Oswald, Kyle Plummer, Kyler Randall, \\ Ethan Seligman, Ed Tomlinson, Nicholas Tymeson, Paing Htet}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\section{Introduction}
+\subsection{Background Knowledge}
+
+\begin{wraptable}{r}{5.5cm}
+\begin{tabular}{|l|l|}
+
+\hline
+\textbf{Software Name} & \textbf{Language} \\
+\hline
+bbPress & PHP \\
+Beehive Forum & PHP \\
+Discourse & Ruby, JavaScript \\
+Discuz & PHP \\
+FluxBB & PHP \\
+FUDforum & PHP \\
+Ikonboard & Perl \\
+Invision Power Board & PHP \\
+MyBB & PHP \\
+Phorum & PHP \\
+phpBB & PHP \\
+PunBB & PHP \\
+Syndie & Java \\
+Thredded & Ruby \\
+Vanilla Forums & PHP \\
+vBulletin & PHP \\
+\hline
+\end{tabular}
+\captionsetup{belowskip=0pt}
+\caption{A list of top forum software and their back end languages. Note the dominance of PHP}
+\end{wraptable}
+\subsubsection{History}
+\paragraph{}
+Internet forums dominated the web as the primary method of online communication before the age of social media. Today, major social media platforms such as \href{https://www.reddit.com/}{reddit}, \href{https://www.4channel.org/}{4chan}, and others still use the forum model as the basis for interaction on their sites. Beyond these juggernauts, forums are still one of the most popular platforms for the online discussion of niche subjects and can be hosted by anyone with a passion and a web server. 
+\paragraph{}
+Forum software is the collection of client and server applications that handle the running and data flow of a forum. The golden age of forums coincided with the height of popularity of PHP and the LAMP stack. Therefore it should be no surprise that PHP dominates the landscape of internet forum software. 
+\subsubsection{The Modern Ecosystem}
+\paragraph{}
+Unfortunately most of these PHP forum applications, while still well maintained, lack the ability to keep up in today's modern web software ecosystems. 
+\begin{textblock}{5}(5, -7)
+For a table of contents, \hyperref[cont]{Click Here}.
+\end{textblock}
+
+\paragraph{}
+Modern web software is built in a more modular manner. This software makes use of design patterns like MVC to handle all interface processing client side using technologies like React and Angular. The aforementioned legacy form software instead used PHP to preform rendering (hypertext pre-processing) of the page server side, which was costly and inefficient. In addition web developers just aren't as interested in PHP as a language anymore. Developers are moving to newer server side technology like Node.js and Express to replace PHP back ends, and MongoDB to replace SQL. 
+
+\subsection{Project Significance}
+\paragraph{}
+The goal of this project is to develop an Internet Forum Software package using a modern stack that can act as a lightweight replacement to the legacy PHP forum software written for the LAMP stack. A modern forum project has wide reaching applications for website customers looking to host forums on their sites. Many customers desire a forum but quickly learn that all the best forums are PHP based. This can force customers to use older PHP software, which isn't as friendly to cloud computing and other accelerating technologies that are geared towards modern stacks. By developing this software, you will provide customers a drop in replacement for legacy systems, and a new paradigm for their website that will bring time tested forum technology into the modern era. 
+
+\section{Structure and Function Background}
+\paragraph{}
+Before getting into requirements it is essential that one understands the structures and functions of internet forums. Please note, while these are not the requirements, your forum must conform to these basic archetypes, as the requirements proceed assuming these are a given. 
+
+\subsection{General Site Structure Overview}\label{structOver}
+\begin{minipage}{0.65\textwidth}
+\paragraph{}
+All forums follow a basic structural pattern of a four level hierarchy (Referred form here on out as 4LH): Home $\to$ Topic $\to$ Thread $\to$ Post. This compartmentalizes forums by breaking them into different sections each with higher specificity of discussion than the last. \ref{home} - \ref{post} provide a broad overview of the purposes of each of these sections.
+\end{minipage}%
+\hspace{0.5cm}
+\vline
+\hspace{0.5cm}
+\begin{minipage}{0.35\textwidth}
+\dirtree{%
+.1 Home. 
+.2 Topic. 
+.3 Thread. 
+.4 Post. 
+}
+\vspace{0.5 cm}
+The 4 level hierarchy (4LH) pattern all forums follow.  
+\end{minipage}%
+
+\newpage
+
+\subsubsection{Examples}\label{StructEx}
+\paragraph{}
+Throughout the explanation of the structure we will refer to three different popular forums (reddit, 4chan, MAL) as examples of different design decisions regarding the sections of the 4LH pattern. Each of these forums uses a 4LH, but they refer to its sections as different things and stylize them in different ways. To illustrate the 4LH sections the trees below provide a side by side comparison with hyperlinks to a sample of each section, and each depict how a forum refers to its sections. Please note that that each section is directly equivalent to the it's level on the 4LH ladder. Some forums' user terminology for one section is the same another forum uses for a different section. For example, MAL refers to it's threads as topics and reddit refers to it's threads as posts.
+\paragraph{}
+
+\begin{minipage}{0.3\textwidth}
+\hspace{0.3cm}
+\href{https://www.reddit.com/}{reddit}
+\vspace{0.2 cm}
+\dirtree{%
+.1 \href{https://www.reddit.com/}{Homepage}. 
+.2 \href{https://www.reddit.com/r/computerscience/}{Community}. 
+.3 \href{https://www.reddit.com/r/computerscience/comments/igpuuf/computer_science_is_not_just_programming/}{Post}. 
+.4 \href{https://www.reddit.com/r/computerscience/comments/igpuuf/computer_science_is_not_just_programming/g2vbikj?utm_source=share&utm_medium=web2x&context=3}{Reply}. 
+}
+\end{minipage}%
+\vline
+\begin{minipage}{0.3\textwidth}
+\hspace{0.3cm}
+\href{https://www.4channel.org/}{4chan}\footnotemark
+\vspace{0.2 cm}
+\dirtree{%
+.1 \href{https://www.4channel.org/}{Home}. 
+.2 \href{https://boards.4channel.org/g/}{Board}. 
+.3 Thread. 
+.4 Reply. 
+}
+\end{minipage}%
+\footnotetext{Due to the nature of 4chan deleting threads after a few days, I cannot provide an active link to a thread or post, but feel free to look at them.}
+\vline
+\begin{minipage}{0.3\textwidth}
+\hspace{0.3cm}
+\href{https://myanimelist.net/}{MAL}\footnotemark
+\vspace{0.2 cm}
+\dirtree{%
+.1 \href{https://myanimelist.net/forum/}{Home}. 
+.2 \href{https://myanimelist.net/forum/?board=7}{Board}. 
+.3 \href{https://myanimelist.net/forum/?topicid=1857368}{Topic}. 
+.4 \href{}{Post}. 
+}
+\end{minipage}%
+\footnotetext{Cannot link directly to posts on MAL}
+
+\subsubsection{Home}\label{home}
+\paragraph{}
+The Home (AKA: Homepage) is the landing page for the forum as well as the primary navigation page for users to pick a topic they are interested in discussing. It contains the name of the forum as well as any branding the forum has (logos and motto's etc). It can highlight popular threads from all topics.
+
+\paragraph{}
+For example; reddit is a forum who's home features top threads, but doesn't have navigation to topics due to the millions of user created reddit communities. Other forums like 4chan and MAL only allow topics to be created by admins, so there is a set navigation layout on the homepage. On these homepages topics are often grouped on into categories. 
+
+\subsubsection{Topic}
+\paragraph{}
+Topics (AKA: boards or communities) are containers for threads. A topic contains threads that are all about similar content (I.E. a forum about animals might have a dog topic, containing threads related to dogs). A topic will have its own page in which threads in that topic will be displayed, and the option to create new threads exists. How much about each thread is displayed varies by platform.
+\paragraph{}
+For example, reddit will display all threads ever posted, but only display the title and image. This allows users to vote on threads using the topic page. 4chan takes a different approach. It displays the fifteen most recently replied to threads and puts them on a page, and has 10 pages of threads per topic. 4chan opts to display the 5 most recent posts in the thread under the thread heading which contains a character capped preview of all the text in the opening thread post. MAL, a more traditional forum, displays the most recently replied to threads, but only display the name of the topic, when and who it was posted by, and when and who posted the last reply. 
+
+\subsubsection{Thread}
+\paragraph{}
+A thread is a container for posts. Threads are the highest level structure that a normal user of a forum can create. A thread is started from a topic's page, and a post is the actual content of the message used to create the thread. A thread will have its own page for users to reply to the thread and each other.
+\paragraph{}
+For example, a reddit thread page lets users see all of the replies to a post and the replies to those replies (Please note that you don't need to implement a reddit like reply system). It also allows users to upvote and downvote replies. A 4chan thread has no direct reply system rather, 4chan allows posts to be "mentioned" by its post ID. In turn a MAL thread has a "quote" option under every post that will allow you to reply and allow other users to track your discussion by posting a minimized version of the quote chain above posts.    
+
+\subsubsection{Post}\label{post}
+\paragraph{}
+A post is the smallest unit of discussion on a forum. A post is a message within a thread. A post will always contain text but may also allow an attached image, file, embed, or video. Users can reply to posts by creating their own posts, usually this will be done on the thread page and there will be no such thing as a "Post page" however some forums like reddit allow for an individual post in a thread to be linked too. 
+\paragraph{}
+reddit is an example of a forum that lets you upload multiple pieces of media when making a post but only if your post is the start of a thread. 4chan on the other hand allows only images but will allow one image to  be attached per post. MAL will allow both unlimited images and links in the initial and reply posts.
+
+\subsection{User Structure}\label{usrStruct}
+Any entity that makes threads, posts, manages, or even looks at the forum is a "User". Forum users vary significantly by desired forum model. Users will have "ranks" or "roles" that grant them certain elevated privileges and forum management options, or users may be anonymous guests and not have any account associated with them at all. 
+
+\begin{minipage}{0.65\textwidth}
+\paragraph{}
+Much like site structure, most forums follow a structural hierarchy for users as well. This pattern is normally something along the lines of Admin $\to$ Moderator $\to$ User $\to$ Guest. This structure is top down, and allows for heightened content quality control by a sites administration.
+\end{minipage}%
+\hspace{0.5cm}
+\vline
+\hspace{0.5cm}
+\begin{minipage}{0.35\textwidth}
+\dirtree{%
+.1 Administrator. 
+.2 Moderator. 
+.3 User. 
+.4 Guest/Anon. 
+}
+\vspace{0.5 cm}
+The forum user hierarchy (FUH)  
+\end{minipage}%
+
+\paragraph{}
+Note that what we will now refer to as a "User" is a user with normal site permissions and not the abstract notion of a user that we have been discussing which by definition encompasses all four of these. It should also be noted that while roles follow the FUH, the true inheritance relationship between admins moderators and users is one of inheritance where admins and moderators are users, while guests are not.
+\\\\\\
+\textbf{UML Model of the FUH:} Associations (small arrows) represent ability to moderate, inheritance relations (white tipped arrows) represent Is-A relationships.
+\vspace{0.5 cm}
+\begin{center}
+    \begin{tikzpicture} 
+        \begin{umlpackage}[x=0, y=0]{Abstract User}
+            \begin{umlpackage}[x=0, y=0]{Account User}
+                \umlsimpleclass[x=1,y=-2]{Admin}
+                \umlsimpleclass[x=1, y=0]{User}
+                \umlsimpleclass[x=0,y=-4]{Moderator}
+            \end{umlpackage}
+            \umlsimpleclass[x=4,y=-2]{Guest}
+        \end{umlpackage}
+        %\umlinherit[anchor1=110, anchor2=-110]{Admin}{User}
+        %\umluniassoc[anchor1=70, anchor2=-70]{Admin}{User}
+        \umlinherit[geometry=|-, anchor1=160, anchor2=173]{Moderator}{User}
+        \umluniassoc[geometry=|-, anchor1=150, anchor2=187]{Moderator}{User}
+        \umluniassoc[geometry=-|, anchor1=-10, anchor2=-90]{Moderator}{Guest}
+        \umluniassoc[geometry=--, anchor1=0, anchor2=180]{Admin}{Guest}
+        \umluniassoc[geometry=--, anchor1=90, anchor2=-90]{Admin}{User}
+        \umlinherit[geometry=--, anchor1=-147.5, anchor2=40]{Admin}{Moderator}
+        \umluniassoc[geometry=--, anchor1=-137.5, anchor2=30]{Admin}{Moderator}
+    \end{tikzpicture}
+\end{center}
+
+\newpage
+\subsubsection{Examples}
+Using the same three sites from \ref{StructEx}, we will analyze their user hierarchy in detail. and compare and contrast them in the following sections.
+
+\vspace{0.2 cm}
+\begin{minipage}{0.4\textwidth}
+\hspace{0.3cm}
+\href{https://www.reddit.com/}{reddit}
+\vspace{0.2 cm}
+\dirtree{%
+.1 Reddit Admin. 
+.2 Community Moderator. 
+.3 User. 
+.4 N/A\footnotemark. 
+}
+\end{minipage}%
+\footnotetext{reddit does not allow posts by guests, must have an account.}
+\vline
+\begin{minipage}{0.23\textwidth}
+\hspace{0.3cm}
+\href{https://www.4channel.org/}{4chan}
+\vspace{0.2 cm}
+\dirtree{%
+.1 Admin. 
+.2 Mod.
+.3 N/A\footnotemark.
+.4 Anon. 
+}
+\end{minipage}%
+\footnotetext{4chan has no accounts for normal users, rather everyone is a "Guest".\footnotemark[6]}
+\vline
+\begin{minipage}{0.4\textwidth}
+\hspace{0.3cm}
+\href{https://myanimelist.net/}{MAL}
+\vspace{0.2 cm}
+\dirtree{%
+.1 Forum Administrator. 
+.2 Forum Moderator. 
+.3 User. 
+.4 N/A\footnotemark.
+}
+\end{minipage}%
+\footnotetext{MAL does not allow posts by guests, must have an account.}
+
+\subsubsection{Administrators}
+Administrators own the forum and have full access to all features including moderation, promotion, style, topic creation, etc. They are the only ones who can moderate moderators and each other. To create a forum, at least one admin account is necessary so that the forum can be managed after its creation. Most forums will display an admin badge or give admins a special name color when an Admin makes a post to let users know to pay extra-close attention to what is being said.    
+
+\subsubsection{Moderators}
+Moderators are generally the policemen of a forum. They have low level moderation work outsourced to them by administrators which is accomplished by patrolling and looking over flagged or reported posts. Moderators may also have elevated permissions to pin threads or create new topics depending on the forums settings.
+
+\subsubsection{Users}
+Users are the normal account holding users of a forum. It is safe to assume that on a regular forum, 99.9\% of abstract users will just be this level of regular user. In order to become a user, a forum will fist have you create an account, and then have you log in to use the forum. 
+
+\subsubsection{Guests / Anons}
+Anyone without an account is a "Guest". Guests usually can't post on normal forums and may not even be allowed to veiw any content. However, some forums like 4chan are almost exclusively used by accounts-less anonymous users, where only mods and admins have accounts.\footnotemark
+\footnotetext{Anyone who really knows 4chan knows that this is a drastic simplification of the account system and that between pass users, tripcode users, and janitors there is more complexity then what could fit into this model.} 
+
+\subsection{Security}
+\paragraph{}
+So that a forum can be more then just a proof of concept, every good forum needs security features. A wide range of forum security features exist across many of our example site, however since our security requirements will primarily be API driven using simple hashing, we will leave the examples to be researched independently. 
+
+\section{Requirements}
+\subsection{Goal}
+\paragraph{}
+Your task is to create a highly customizable forum software with a modern stack that provides forum administrators and users a fine degree of control over the style and features. 
+
+\subsection{Configuration Options}
+\paragraph{}
+A forum isn't highly customizable unless it has options, and quite a few of them at that. These options will allow forum users to customize almost every aspect of the form from layout and style all the way to features and moderation. By integrating a diverse array of options, the functionality of the end product will grow exponentially with the number of people who find this software able to be customized to their needs. Sections \ref{configclass} - \ref{confighier} will elaborate on the complexities and structures of configurations which will be used extensively throughout the rest of the requirements. 
+
+\subsubsection{Configuration Classes (Configurable by Who and When)}\label{configclass}
+\paragraph{}
+We clarified earlier that users set options, however this broad statement is too vague to be left as is without further clarification. "Users set options", Provides us with proposition that has three free parameters which must be clarified before any given option is implemented. Firstly, Which "Users" can set this option? This restricts options certain options to certain users in the FUH. Secondly, What option is being implemented? These specifics of an options requirements will be ironed out in section \ref{configTypes}. Finally, the least intuitive of these parameters: At what point in time can this option be set? Not all options will be set during the lifetime of the forum, Some will only be able to be set at the creation of the forum and will not be able to be changed once it is created. 
+\paragraph{}
+The following classes have been created with parameters one and three in mind; to classify options based on level in the FUH and at what time these options can be set in the forum's life cycle.
+
+\begin{enumerate}
+    \item \textbf{Setup Administrator Configuration (SAC):} These options will be set by an admin during setup time, for clarification see section \ref{accAdmin}  
+    \item \textbf{Setup Guest Option (SGO):} An option available in setup mode to guests, only used for account creation options which need to be accessed for the creation of the initial admin account. 
+    \item \textbf{Live Administrator Option (LAO):} Some options should be modifiable after the forum is created, but only accessible by forum administrators. These options will typically deal with high level forum management and layout, such as the creation of new topics, changing logos, etc. 
+    \item \textbf{Live Moderator Option (LMO):} LMOs are the options available to moderators that deal with forum administration. This includes the ability to delete posts and threads, as well as ban and mute users. 
+    \item \textbf{Live User Option (LUO):} These options are available to all users with accounts at any time. Examples include post options and thread creation options.  
+    \item \textbf{Live Individual Option (LIO):} Some options should only be available to a single individual user account, This includes setting user style and the ability to delete and edit your own posts.  
+    \item \textbf{Guest Option (LGO):} Sometimes guests will have access to options even without an account. Where it applies, these settings can be saved via cookies rather then on a users account. 
+\end{enumerate}
+\subsubsection{Configuration and Option Types}\label{configTypes}
+\paragraph{}
+Each configuration, on top of user and temporal restrictions, also has a type associated with it. There are four primary configuration types: Boolean, Radio, Input, File.
+
+\begin{enumerate}
+    \item \textbf{Boolean:} A Boolean configuration is either on (enabled) or off (disabled), by default it will be disabled and when disabled will also set all sub configurations to their default (disabled) states.
+    \item \textbf{Radio:} A radio configuration will allow one of multiple choices to be selected (think radio buttons), these choices will be displayed as sub-options in the option hierarchy, each one having a markedly different effect. By default will have their first option selected.
+    \item \textbf{Input:} An input option will take a string of text or number entered by the user and use it for a setting, think HTML Input element. Inputs are empty by default.
+    \item \textbf{File:} A File option will allow a file to be uploaded, this can be used for attachments to posts or uploading styles. 
+\end{enumerate}
+
+\subsubsection{Configuration and Option Hierarchy}\label{confighier}
+\paragraph{}
+Some configuration settings and options will depend on the value other configuration settings creating a hierarchy of options in the form of a tree. You will note that Inputs can only be leaves while Radios and Booleans are allowed to be part of the trunk. While we state "A Boolean option will be set to false if its parent is false" what we really mean is that if a Boolean option is set to false, its sub options are unable to be set and shouldn't be read from at all.
+\\\\
+\textbf{Sample Boolean Configuration Hierarchy:}\\
+(Where XXX is the three letter configuration class abbreviation)
+\dirtree{%
+.1 XXX Option:Boolean$\hspace{35pt}$\begin{minipage}[t]{5cm}
+The top level option, off by default\\
+\end{minipage}. 
+.2 XXX Sub-Option:Boolean$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    If Option is false, this should be off, unsettable, and never accessed\\
+\end{minipage}. 
+.3 XXX Sub-Sub-Option:Boolean$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    If Sub-Option is false, this should be off, unsettable, and never accessed\\
+\end{minipage}. 
+}
+
+\textbf{Sample Radio Configuration Hierarchy:}
+\dirtree{%
+.1 XXX Option:Radio{o1,o2,o3}$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    The top level option, o1 by default\\
+\end{minipage}. 
+.2 o1$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Option "o1", If selected will allow access to sub options\\
+\end{minipage}. 
+.3 XXX boolSubOpt:Boolean $\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Boolean sub-option available to be configured if Option is set to o1\\
+\end{minipage}. 
+.2 o2$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Option "o2", If selected will allow access to sub options\\
+\end{minipage}. 
+.3 XXX inSubOpt:Input $\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Input sub-option available to be configured if Option is set to o2\\
+\end{minipage}. 
+.2 o3$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Option "o3", Has no sub options and this is perfectly legal\\
+\end{minipage}. 
+}
+
+\subsubsection{Setup Live Symbiotism}\label{confighier}
+For brevity we have included the ability for setup options (those who's three letter acronym begins with S) to have live sub-options (those who's three letter acronym begins with L). When encountering a setup like this, you should interpret it to mean that the the setup option will appear on the setup page, but its sub-options will appear on the current page if their parent was enabled at setup. 
+
+\textbf{Sample Setup Option with Live Sub Option:}
+\dirtree{%
+.1 SXX setupOption:Bool$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Present on the setup page, NOT the current page\\
+\end{minipage}. 
+.2 LXX liveOption:X $\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Present on current page if parent option was enabled on the startup page\\
+\end{minipage}.
+}
+
+\subsection{Life Cycle (Mode) Requirements}
+\paragraph{}
+As you will recall from section \ref{configclass}, a core component of forum options is time at which an option is configurable. This clearly implies that a forum has a life cycle and that certain structure and features are different depending on when stage the forum is at.
+\paragraph{}
+In reality, the life cycle is quite simple and only consists of three distinct life stages or "Modes" that the forum application can be in: Setup, Live, Down.
+\paragraph{}
+\textbf{Setup Mode:}
+When the server side of the forum starts up, it checks to see if it is starting for the first time. If it is, then the forum enters setup state. The setup state will prompt anyone who visits the forum to first create an account, which will be the first account made and set to admin by default, see account creation requirements \ref{accountCreation}. After the account is made, the user must login and will then be presented with a setup screen asking the user for all Setup Administrator Configurations (SACs). Once confirmed, these options will be used to set up the database structure and configure the layout to be used, the forum will enter the live state, unless an error is encountered, in which it will enter the down state.
+\paragraph{}
+\textbf{Live Mode:}
+This is the normal operational mode of the forum. When in this state users can preform all normal functionality. The site should remain in this state unless down for maintenance, which will be discussed as an option later.   
+\paragraph{}
+\textbf{Down Mode:}
+This mode prevents users from logging in, and is triggered in the event of a server error or intentional maintenance. It will provide admins a way to diagnose errors if it was caused by a server error, or allow admins and moderators access to all live options and posts as if the site was up if caused intentionally for maintenance. Normal users and guests will be met with a down for maintenance message when visiting the forum, the only way around which is to log in with an admin account. Note that what options are available in this state are dependant on what caused the forum to go down.
+
+\subsection{Accounts and Account Creation Requirements}\label{accountCreation}
+Accounts must be setup according to the FUH discussed in section \ref{usrStruct}. This means you must implement four levels of abstract user: Admin, Moderator, User, and Guest. The way in which you implement the inheritance relationship between them is up to you but please ensure that the moderation hierarchy is compliant with the UML moderation ability diagram in section \ref{usrStruct}. 
+
+\subsubsection{Admin Account Creation Overview}\label{accAdmin}
+When setting up a forum for the first time, an administrator should have the option to decide on a variety of features that the forum should have in setup mode. The SACs will determine the layout of the database for storing posts and users. These SACs CAN NOT BE MODIFIED after the forum has been created, as these options will be used to determine how the database is structured, and modifying these after creation would cause incompatibility with earlier posts.
+
+\subsubsection{General Account Creation}
+For the account creation page requirements see \ref{AccPage}. This section deals with the background features that must take place when creating an account. Firstly, when creating an account, all accounts besides the first one created are User level by default. To create new admins or moderators, the original admin will need to manually upgrade their accounts, alternatively a moderator role may be auto assigned based on various options discussed later. When creating an account, the user will asked to provide a username, email, password, and confirmation password. You must run a check to make sure that the username isn't already taken, that the passwords match, and then preform email verification. To top it off, you must include a captcha to prevent automated creation of accounts from malicious actors.
+
+\subsection{Site Structure Requirements}
+\paragraph{}
+The site must be broken up according to the 4LH pattern discussed in section \ref{structOver}. Additionally the forum's life cycle modes dictate the additional small amount of structure needed for handling error cases and setup cases. The following are the bare minimum requirements for what pages must be implemented and their associated options. 
+
+\subsubsection{Account Creation}\label{AccPage}
+\paragraph{}
+This page must be available in Setup Mode and Live Mode. It allows for account creation using the following options as well as a captcha for security. Make sure to remember that the first account created on this page will always be given administrator status.
+\paragraph{}
+On top of the following options, this page must include a captcha a submit button to process the creation of the new account. In the event of an error, display the problem and allow the user to try again with new data, remember to keep as much of this processing client side as possible.
+\newpage
+\textbf{Account Creation Page Options:}
+\dirtree{%
+.1 .
+.2 LGO Username:Input$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    The Username of the account to be created\\
+\end{minipage}. 
+.2 LGO Email:Input$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Email for email verification of the account\\
+\end{minipage}. 
+.2 LGO Password:Input$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    New password for the account, should be implemented \\
+\end{minipage}. 
+.2 LGO confirmPassword:Input$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Password confirmation ensuring the user typed the desired password\\
+\end{minipage}. 
+}
+
+\subsubsection{Setup Page}
+
+\subsection{Down Page}
+
+\subsubsection{Home Page}
+
+\subsubsection{Home Page}
+
+\subsubsection{Home Page}
+
+
+
+\subsection{Multi Page Features}
+Some features are ubiquitous across multiple pages, such as the ability to vote on things which could be generalized to Topics, Boards, and Posts. In order to save
+
+\subsubsection{Voting}
+The ability for users to upvote and downvote posts and threads. A Sub-option to downvotes should be present that will hide downvotes from users. 
+A good example of forum with upvote and downvote functionality is \href{https://www.reddit.com/}{Reddit}, and a good example of a forum like environment with upvotes and invisible downvotes is the \href{https://www.youtube.com/}{Youtube} comments section. 
+
+\\
+\dirtree{%
+.1 Setup Options. 
+.2 Voting : Boolean$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    The voting option enables the ability for users to upvote and downvote posts and threads\\
+\end{minipage}. 
+.3 Downvotes Enabled: Boolean$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    Disables the ability for posts to be downvoted\\
+\end{minipage}. 
+.4 Invisible Downvotes: Boolean$\hspace{35pt}$\begin{minipage}[t]{5cm}
+    \\
+\end{minipage}. 
+}
+
+\subsubsection{User Mode Options}
+Account Driven, anonymous 
+
+\subsection{Security Features}
+Back end handles data safely, site uses meets standards for safe authentication and protects user's data. Database is kept as safe as passable from injection attacks and leaks. 
+
+
+
+\newpage
+\section{Contents}\label{cont}
+\tableofcontents
+
+\end{document}
+
